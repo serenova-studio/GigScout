@@ -75,6 +75,8 @@
     font-weight: 500;
   }
 
+  input::placeholder, textarea::placeholder { color: #3d4454 !important; }
+
   /* Layout */
   .layout {
     display: grid;
@@ -676,7 +678,7 @@
 
       <div class="form-group">
         <label>希望ジャンル ＊</label>
-        <input type="text" id="genre" placeholder="例：GPTs作成代行、動画編集、Instagram運用代行">
+        <input type="text" id="genre" placeholder="例：GPTs作成代行、動画編集">
       </div>
 
       <div class="form-group">
@@ -705,8 +707,8 @@
           <input type="text" id="hours" placeholder="例：10時間">
         </div>
         <div class="form-group">
-          <label>希望最低報酬</label>
-          <input type="text" id="reward" placeholder="例：時給1000円以上">
+          <label>希望最低報酬 <span style="font-size:10px;color:var(--text-muted);font-weight:400;">例：時給1000円以上</span></label>
+          <input type="text" id="reward" placeholder="時給1000円以上">
         </div>
       </div>
 
@@ -721,7 +723,7 @@
 
       <div class="form-group">
         <label>作業スタイル</label>
-        <input type="text" id="style" placeholder="例：一人で黙々と作業したい、マニュアルがあれば安心">
+        <input type="text" id="style" placeholder="例：マニュアルがあれば安心">
       </div>
     </div>
 
@@ -737,12 +739,12 @@
 
       <div class="form-group">
         <label>得意な作業</label>
-        <input type="text" id="skills" placeholder="例：動画編集、GPTs設計・作成、プロンプト設計、AI活用サポート">
+        <input type="text" id="skills" placeholder="例：動画編集、GPTs設計・作成、プロンプト設計">
       </div>
 
       <div class="form-group">
         <label>使用ツール</label>
-        <input type="text" id="tools" placeholder="例：Premiere Pro、ChatGPT、GPTs、Canva、Excel、CapCut">
+        <input type="text" id="tools" placeholder="例：Premiere Pro、ChatGPT、Canva、Excel">
       </div>
     </div>
 
@@ -962,7 +964,6 @@
 
   // Generate
   function generatePrompt() {
-    const name = document.getElementById('name').value.trim();
     const genre = document.getElementById('genre').value.trim();
     const hours = document.getElementById('hours').value.trim();
     const reward = document.getElementById('reward').value.trim();
@@ -990,7 +991,7 @@
 見栄えが良いだけの案件より、スキルが合っていて返信率が高そうな案件を選んでください。
 過剰アクセスは禁止。各サイト最大10件、合計最大30件。取得できない場合は理由を記録。
 
-# 私の情報${name ? `\n・名前：${name}` : ''}
+# 私の情報
 ・希望ジャンル：${genre}
 ・週の稼働時間：${hours || '（未入力）'}
 ・希望報酬：${reward || '時給1000円以上'}
@@ -1053,7 +1054,8 @@ ${niceList}
 ・です・ます調で書く
 ・構成：①案件への共感 ②自分の強み ③相手目線のメリット ④締め
 ・案件ごとに内容を変えること
-・テンプレートのような文章にしないこと${name ? `\n・名前（${name}）は入れないこと` : ''}
+・テンプレートのような文章にしないこと
+・名前は入れないこと
 
 # 出力形式
 調査結果を以下のGAS URLにPOSTリクエストでJSON形式で送信してください。
@@ -1288,6 +1290,7 @@ JSONの形式：
       document.getElementById(id).value = '';
     });
     tagData.keywords = []; renderTags('keywords', 'keywords-container', '');
+    document.getElementById('keyword-input').value = '';
 
     // プロンプト出力をクリア
     document.getElementById('prompt-output').textContent = '入力をリセットしました。\n\n希望ジャンルと検索キーワードを入力して\n「プロンプトを生成する」ボタンを押してください。';
