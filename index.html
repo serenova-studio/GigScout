@@ -207,9 +207,9 @@
   }
 
   .tag.ng {
-    background: rgba(255, 77, 109, 0.15);
-    border-color: rgba(255, 77, 109, 0.3);
-    color: var(--danger);
+    background: rgba(0, 102, 255, 0.15);
+    border-color: rgba(0, 102, 255, 0.3);
+    color: #5599ff;
   }
 
   .tag.must {
@@ -219,9 +219,9 @@
   }
 
   .tag.nice {
-    background: rgba(255, 184, 0, 0.15);
-    border-color: rgba(255, 184, 0, 0.3);
-    color: var(--warning);
+    background: rgba(0, 102, 255, 0.15);
+    border-color: rgba(0, 102, 255, 0.3);
+    color: #5599ff;
   }
 
   .tag-remove {
@@ -372,8 +372,8 @@
   }
 
   .btn-copy:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--accent2);
+    color: #5599ff;
   }
 
   .btn-copy.copied {
@@ -660,7 +660,7 @@
     <div class="section">
       <div class="section-header">
         <div class="section-badge badge-yellow"></div>
-        <span class="section-title">🔄 検索条件（毎回変える）</span>
+        <span class="section-title">検索条件</span>
         <span class="save-hint" style="background:rgba(255,184,0,0.1);border-color:rgba(255,184,0,0.3);color:var(--warning);">🔄 リセット対象</span>
       </div>
 
@@ -675,7 +675,7 @@
           <input class="tag-input" id="keyword-input" placeholder="キーワードを入力してEnter">
         </div>
         <p class="tag-hint">例：「GPTs」「AI活用」「プロンプト設計」「業務効率化」</p>
-      <button class="btn-reset-soft" onclick="resetSoft()" style="margin-top:10px;">🔄 検索条件をクリア</button>
+      <button class="btn-reset-soft" onclick="resetSoft()" style="margin-top:10px;">検索条件をクリア</button>
       </div>
     </div>
 
@@ -686,7 +686,7 @@
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">基本情報</span>
-        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
+        <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
 
       <div class="form-group">
@@ -727,7 +727,7 @@
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">スキル・経験</span>
-        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
+        <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
 
       <div class="form-group">
@@ -748,7 +748,7 @@
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">NG条件</span>
-        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
+        <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="tags-container" id="ng-container" onclick="document.getElementById('ng-input').focus()">
         <input class="tag-input" id="ng-input" placeholder="NG条件を入力してEnter">
@@ -760,7 +760,7 @@
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">Must条件（必須）</span>
-        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
+        <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="tags-container" id="must-container" onclick="document.getElementById('must-input').focus()">
         <input class="tag-input" id="must-input" placeholder="Must条件を入力してEnter">
@@ -772,7 +772,7 @@
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">Nice条件（加点）</span>
-        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
+        <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="tags-container" id="nice-container" onclick="document.getElementById('nice-input').focus()">
         <input class="tag-input" id="nice-input" placeholder="Nice条件を入力してEnter">
@@ -787,7 +787,7 @@
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">メモ・プロフィール一括入力</span>
-        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
+        <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">ナレッジやメモに保存している情報をそのまま貼り付けてください。プロンプトの末尾に追加されます。</p>
       <div class="file-drop-area" id="file-drop-area" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
@@ -810,7 +810,7 @@
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">出力先設定</span>
-        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
+        <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="form-group">
         <label>GAS URL（推奨・確実に書き込めます）</label>
@@ -1130,7 +1130,7 @@ JSONの形式：
     const isOn = !btn.classList.contains('off');
     btn.classList.toggle('off', isOn);
     // テキストノード更新
-    btn.childNodes[0].textContent = isOn ? '保存なし' : '💾 保存あり';
+    btn.childNodes[0].textContent = isOn ? '保存なし' : '保存あり';
   }
 
   // 各セクションのトグル状態を取得
@@ -1221,7 +1221,7 @@ JSONの形式：
         allToggles.forEach((toggle, i) => {
           const isOn = data.toggleStates['t' + i] !== false;
           toggle.classList.toggle('off', !isOn);
-          toggle.childNodes[0].textContent = isOn ? '💾 保存あり' : '保存なし';
+          toggle.childNodes[0].textContent = isOn ? '保存あり' : '保存なし';
         });
       }
     } catch(e) {}
@@ -1311,7 +1311,7 @@ JSONの形式：
     // トグルを全てONに戻す
     document.querySelectorAll('.toggle-save').forEach(toggle => {
       toggle.classList.remove('off');
-      toggle.childNodes[0].textContent = '💾 保存あり';
+      toggle.childNodes[0].textContent = '保存あり';
     });
 
     document.getElementById('prompt-output').textContent = '全てクリアしました。\n\n左側の項目を入力して\n「プロンプトを生成する」ボタンを押してください。';
