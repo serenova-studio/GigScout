@@ -400,6 +400,61 @@
   .btn-save:hover { border-color: var(--accent2); color: #5599ff; }
   .btn-save.saved { border-color: var(--accent2); color: #5599ff; background: rgba(0, 102, 255, 0.1); }
 
+
+  /* Toggle Save Switch */
+  .toggle-save {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    padding: 3px 8px 3px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 11px;
+    color: var(--accent);
+    font-family: 'Noto Sans JP', sans-serif;
+    white-space: nowrap;
+    background: rgba(0,229,160,0.08);
+  }
+
+  .toggle-save.off {
+    border-color: var(--border);
+    color: var(--text-muted);
+    background: transparent;
+  }
+
+  .toggle-dot {
+    width: 26px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 7px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle-save.off .toggle-dot {
+    background: var(--border);
+  }
+
+  .toggle-dot::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 14px;
+    transition: left 0.2s;
+  }
+
+  .toggle-save.off .toggle-dot::after {
+    left: 2px;
+  }
+
   .action-row {
     display: flex;
     gap: 10px;
@@ -454,6 +509,27 @@
     border-color: var(--danger);
     color: var(--danger);
     background: rgba(255, 77, 109, 0.1);
+  }
+
+  .btn-reset-soft {
+    padding: 10px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-reset-soft:hover {
+    border-color: var(--warning);
+    color: var(--warning);
+    background: rgba(255, 184, 0, 0.1);
   }
 
   /* Confirm dialog */
@@ -580,23 +656,42 @@
   <!-- Left: Input -->
   <div class="left-panel">
 
+    <!-- 検索条件（毎回変える） -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-yellow"></div>
+        <span class="section-title">🔄 検索条件（毎回変える）</span>
+        <span class="save-hint" style="background:rgba(255,184,0,0.1);border-color:rgba(255,184,0,0.3);color:var(--warning);">🔄 リセット対象</span>
+      </div>
+
+      <div class="form-group">
+        <label>希望ジャンル ＊</label>
+        <input type="text" id="genre" placeholder="例：GPTs作成代行、動画編集、Instagram運用代行">
+      </div>
+
+      <div class="form-group">
+        <label>検索キーワード（Enterで追加）＊</label>
+        <div class="tags-container" id="keywords-container" onclick="document.getElementById('keyword-input').focus()">
+          <input class="tag-input" id="keyword-input" placeholder="キーワードを入力してEnter">
+        </div>
+        <p class="tag-hint">例：「GPTs」「AI活用」「プロンプト設計」「業務効率化」</p>
+      <button class="btn-reset-soft" onclick="resetSoft()" style="margin-top:10px;">🔄 検索条件をクリア</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
     <!-- 基本情報 -->
     <div class="section">
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">基本情報</span>
-        <span class="save-hint">💾 保存あり</span>
+        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>お名前（任意）</label>
-          <input type="text" id="name" placeholder="例：そら">
-        </div>
-        <div class="form-group">
-          <label>希望ジャンル ＊</label>
-          <input type="text" id="genre" placeholder="例：GPTs作成代行">
-        </div>
+      <div class="form-group">
+        <label>お名前（任意）</label>
+        <input type="text" id="name" placeholder="例：そら">
       </div>
 
       <div class="form-row">
@@ -627,12 +722,12 @@
 
     <hr class="divider">
 
-    <!-- スキル -->
+    <!-- スキル・経験 -->
     <div class="section">
       <div class="section-header">
-        <div class="section-badge badge-green"></div>
+        <div class="section-badge badge-blue"></div>
         <span class="section-title">スキル・経験</span>
-        <span class="save-hint">💾 保存あり</span>
+        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
       </div>
 
       <div class="form-group">
@@ -642,15 +737,7 @@
 
       <div class="form-group">
         <label>使用ツール</label>
-        <input type="text" id="tools" placeholder="例：ChatGPT、GPTs、Canva、Excel">
-      </div>
-
-      <div class="form-group">
-        <label>検索キーワード（Enterで追加）＊</label>
-        <div class="tags-container" id="keywords-container" onclick="document.getElementById('keyword-input').focus()">
-          <input class="tag-input" id="keyword-input" placeholder="キーワードを入力してEnter">
-        </div>
-        <p class="tag-hint">例：「GPTs」「AI活用」「プロンプト設計」</p>
+        <input type="text" id="tools" placeholder="例：ChatGPT、GPTs、Canva、Excel、CapCut">
       </div>
     </div>
 
@@ -659,38 +746,38 @@
     <!-- 条件 -->
     <div class="section">
       <div class="section-header">
-        <div class="section-badge badge-red"></div>
+        <div class="section-badge badge-blue"></div>
         <span class="section-title">NG条件</span>
-        <span class="save-hint">💾 保存あり</span>
+        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="tags-container" id="ng-container" onclick="document.getElementById('ng-input').focus()">
         <input class="tag-input" id="ng-input" placeholder="NG条件を入力してEnter">
       </div>
-      <p class="tag-hint">例：顔出し必須、通話営業あり、高度なプログラミング必須</p>
+      <p class="tag-hint">例：顔出し必須、通話営業あり、高度なエフェクト・3D編集必須</p>
     </div>
 
     <div class="section">
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
         <span class="section-title">Must条件（必須）</span>
-        <span class="save-hint">💾 保存あり</span>
+        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="tags-container" id="must-container" onclick="document.getElementById('must-input').focus()">
         <input class="tag-input" id="must-input" placeholder="Must条件を入力してEnter">
       </div>
-      <p class="tag-hint">例：未経験OK、リモート完結、テキストのみでOK</p>
+      <p class="tag-hint">例：未経験OK、リモート完結、素材支給あり</p>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <div class="section-badge badge-yellow"></div>
+        <div class="section-badge badge-blue"></div>
         <span class="section-title">Nice条件（加点）</span>
-        <span class="save-hint">💾 保存あり</span>
+        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="tags-container" id="nice-container" onclick="document.getElementById('nice-input').focus()">
         <input class="tag-input" id="nice-input" placeholder="Nice条件を入力してEnter">
       </div>
-      <p class="tag-hint">例：継続案件、マニュアルあり、週5時間以内で完結</p>
+      <p class="tag-hint">例：継続案件、マニュアルあり、ショート動画中心、テンプレあり</p>
     </div>
 
     <hr class="divider">
@@ -698,9 +785,9 @@
     <!-- メモ・プロフィール一括入力 -->
     <div class="section">
       <div class="section-header">
-        <div class="section-badge badge-yellow"></div>
+        <div class="section-badge badge-blue"></div>
         <span class="section-title">メモ・プロフィール一括入力</span>
-        <span class="save-hint">💾 保存あり</span>
+        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
       </div>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">ナレッジやメモに保存している情報をそのまま貼り付けてください。プロンプトの末尾に追加されます。</p>
       <div class="file-drop-area" id="file-drop-area" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
@@ -721,15 +808,23 @@
     <!-- スプシURL -->
     <div class="section">
       <div class="section-header">
-        <div class="section-badge badge-green"></div>
-        <span class="section-title">出力先スプレッドシート</span>
+        <div class="section-badge badge-blue"></div>
+        <span class="section-title">出力先設定</span>
+        <button class="toggle-save" onclick="toggleSave(this)">💾 保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="form-group">
-        <label>Google スプレッドシートURL</label>
+        <label>GAS URL（推奨・確実に書き込めます）</label>
+        <input type="text" id="gas-url" placeholder="https://script.google.com/macros/s/...">
+      </div>
+      <div class="form-group">
+        <label>Google スプレッドシートURL（任意）</label>
         <input type="text" id="sheet-url" placeholder="https://docs.google.com/spreadsheets/d/...">
       </div>
     </div>
 
+    <button class="btn-save" id="save-btn" onclick="saveSettings()" style="margin-bottom:10px;">
+      💾 固定情報を保存
+    </button>
     <button class="btn-generate" onclick="generatePrompt()">
       ✨ プロンプトを生成する
     </button>
@@ -746,11 +841,8 @@
       <button class="btn-copy" id="copy-btn" onclick="copyPrompt()">
         📋 コピー
       </button>
-      <button class="btn-save" id="save-btn" onclick="saveSettings()">
-        💾 固定情報を保存
-      </button>
-      <button class="btn-reset" id="reset-btn" onclick="confirmReset()">
-        🗑️ 全リセット
+      <button class="btn-reset" onclick="resetHard()">
+        🗑️ 全て初期化
       </button>
     </div>
 
@@ -777,10 +869,10 @@
 <div class="confirm-overlay" id="confirm-overlay">
   <div class="confirm-box">
     <div class="confirm-icon">🗑️</div>
-    <h3>全てリセットしますか？</h3>
-    <p>入力した内容と保存した固定情報が<br>全て削除されます。<br>この操作は元に戻せません。</p>
+    <h3>全て初期化しますか？</h3>
+    <p>入力した内容と保存した固定情報が<br>全て消えます。<br>この操作は元に戻せません。</p>
     <div class="confirm-btns">
-      <button class="btn-yes" onclick="executeReset()">リセットする</button>
+      <button class="btn-yes" onclick="executeReset()">初期化する</button>
       <button class="btn-no" onclick="closeConfirm()">キャンセル</button>
     </div>
   </div>
@@ -866,6 +958,7 @@
     const skills = document.getElementById('skills').value.trim();
     const tools = document.getElementById('tools').value.trim();
     const sheetUrl = document.getElementById('sheet-url').value.trim();
+    const gasUrl = document.getElementById('gas-url').value.trim();
     const experience = document.querySelector('#experience-group .toggle-btn.active')?.textContent || '未経験';
 
     const memo = document.getElementById('memo-text').value.trim();
@@ -877,7 +970,8 @@
     const mustList = tagData.must.length > 0 ? tagData.must.map(v => `・${v}`).join('\n') : '・（なし）';
     const niceList = tagData.nice.length > 0 ? tagData.nice.map(v => `・${v}`).join('\n') : '・（なし）';
     const keywords = tagData.keywords.map(k => `「${k}」`).join('・');
-    const urlLine = sheetUrl ? `URL：${sheetUrl}` : 'URL：（スプレッドシートのURLを貼り付けてください）';
+    const gasLine = gasUrl ? gasUrl : '（GAS URLをここに入力してください）';
+    const urlLine = sheetUrl ? `\n参考スプレッドシートURL：${sheetUrl}` : '';
 
     const prompt = `あなたは案件スカウターです。
 「応募して採用される可能性が高い案件」を優先してください。
@@ -950,32 +1044,31 @@ ${niceList}
 ・テンプレートのような文章にしないこと${name ? `\n・名前（${name}）は入れないこと` : ''}
 
 # 出力形式
-以下のスプレッドシートに列を分けて記入してください。
-${urlLine}
+調査結果を以下のGAS URLにPOSTリクエストでJSON形式で送信してください。
 
-1行目はヘッダーなので2行目から記入してください。
+GAS URL：${gasLine}${urlLine}
 
-【記入形式】
-1案件目：A2・B2・C2・D2・E2・F2・G2・H2・I2・J2・K2
-2案件目：A3・B3・C3・D3・E3・F3・G3・H3・I3・J3・K3
-以降同じ形式で続ける
+JSONの形式：
+{
+  "rows": [
+    {
+      "date": "取得日",
+      "site": "サイト名",
+      "title": "案件名",
+      "reward": "報酬",
+      "match_score": "マッチ度（数値）",
+      "match_star": "マッチ度（★）",
+      "reason": "おすすめ理由",
+      "caution": "注意点",
+      "deadline": "締切・募集人数",
+      "url": "案件URL",
+      "proposal": "提案文"
+    }
+  ]
+}
 
-【列の内容】
-A列：取得日
-B列：サイト名
-C列：案件名
-D列：報酬
-E列：マッチ度（数値）
-F列：マッチ度（★）
-G列：おすすめ理由
-H列：注意点
-I列：締切・募集人数
-J列：URL
-K列：提案文（300文字以内）
-
-※必ず各項目を対応する列に分けて記入すること
-※A列にまとめて記入しないこと
-※B列のサイト名は必ず記入すること
+※スプレッドシートへの直接書き込みは不要
+※必ず上記GAS URLへのPOSTで送信すること
 
 開始してください。${memo ? `\n\n# 参考情報（応募者のプロフィール詳細）\n${memo}` : ''}`;
 
@@ -1032,20 +1125,63 @@ K列：提案文（300文字以内）
   }
 
   // Save / Load
+  // トグルON/OFF切り替え
+  function toggleSave(btn) {
+    const isOn = !btn.classList.contains('off');
+    btn.classList.toggle('off', isOn);
+    // テキストノード更新
+    btn.childNodes[0].textContent = isOn ? '保存なし' : '💾 保存あり';
+  }
+
+  // 各セクションのトグル状態を取得
+  function getSaveToggles() {
+    const toggles = document.querySelectorAll('.toggle-save');
+    const result = {};
+    toggles.forEach((t, i) => {
+      result['toggle_' + i] = !t.classList.contains('off');
+    });
+    return result;
+  }
+
   function saveSettings() {
-    const data = {
-      skills: document.getElementById('skills').value,
-      tools: document.getElementById('tools').value,
-      style: document.getElementById('style').value,
-      hours: document.getElementById('hours').value,
-      reward: document.getElementById('reward').value,
-      ng: [...tagData.ng],
-      must: [...tagData.must],
-      nice: [...tagData.nice],
-      sheetUrl: document.getElementById('sheet-url').value,
-      memo: document.getElementById('memo-text').value,
-      experience: document.querySelector('#experience-group .toggle-btn.active')?.textContent || '未経験'
-    };
+    const toggles = getSaveToggles();
+    const allToggles = document.querySelectorAll('.toggle-save');
+
+    // 各セクションのトグル状態に応じて保存
+    const data = { toggleStates: {}, experience: document.querySelector('#experience-group .toggle-btn.active')?.textContent || '未経験' };
+
+    // セクション名とフィールドのマッピング
+    const sectionMap = [
+      { key: 'basic', fields: ['name','hours','reward','style'] },
+      { key: 'skills', fields: ['skills','tools'] },
+      { key: 'ng', tags: 'ng' },
+      { key: 'must', tags: 'must' },
+      { key: 'nice', tags: 'nice' },
+      { key: 'memo', fields: ['memo-text'] },
+      { key: 'output', fields: ['sheet-url','gas-url'] },
+    ];
+
+    allToggles.forEach((toggle, i) => {
+      const isOn = !toggle.classList.contains('off');
+      data.toggleStates['t' + i] = isOn;
+      if (i < sectionMap.length && isOn) {
+        const section = sectionMap[i];
+        if (section.fields) {
+          section.fields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.value;
+          });
+        }
+        if (section.tags) {
+          data[section.tags] = [...tagData[section.tags]];
+        }
+      }
+    });
+
+    // 常に保存するもの
+    data['sheet-url'] = document.getElementById('sheet-url').value;
+    data['gas-url'] = document.getElementById('gas-url').value;
+
     localStorage.setItem('scout_settings', JSON.stringify(data));
     const btn = document.getElementById('save-btn');
     btn.textContent = '✅ 保存しました！';
@@ -1062,13 +1198,12 @@ K列：提案文（300文字以内）
     if (!raw) return;
     try {
       const data = JSON.parse(raw);
-      if (data.skills) document.getElementById('skills').value = data.skills;
-      if (data.tools) document.getElementById('tools').value = data.tools;
-      if (data.style) document.getElementById('style').value = data.style;
-      if (data.hours) document.getElementById('hours').value = data.hours;
-      if (data.reward) document.getElementById('reward').value = data.reward;
-      if (data.sheetUrl) document.getElementById('sheet-url').value = data.sheetUrl;
-      if (data.memo) document.getElementById('memo-text').value = data.memo;
+
+      // フィールド復元
+      ['skills','tools','style','hours','reward','memo-text','sheet-url','gas-url','name'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && data[id]) el.value = data[id];
+      });
 
       if (data.ng) { tagData.ng = data.ng; renderTags('ng', 'ng-container', 'ng'); }
       if (data.must) { tagData.must = data.must; renderTags('must', 'must-container', 'must'); }
@@ -1077,6 +1212,16 @@ K列：提案文（300文字以内）
       if (data.experience) {
         document.querySelectorAll('#experience-group .toggle-btn').forEach(btn => {
           btn.classList.toggle('active', btn.textContent === data.experience);
+        });
+      }
+
+      // トグル状態復元
+      if (data.toggleStates) {
+        const allToggles = document.querySelectorAll('.toggle-save');
+        allToggles.forEach((toggle, i) => {
+          const isOn = data.toggleStates['t' + i] !== false;
+          toggle.classList.toggle('off', !isOn);
+          toggle.childNodes[0].textContent = isOn ? '💾 保存あり' : '保存なし';
         });
       }
     } catch(e) {}
@@ -1124,8 +1269,23 @@ K列：提案文（300文字以内）
     showToast('🗑️ メモをクリアしました');
   }
 
-  // Reset
-  function confirmReset() {
+  // Reset soft（入力のみリセット・固定情報は保持）
+  function resetSoft() {
+    // 毎回変える部分だけクリア
+    ['genre'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    tagData.keywords = []; renderTags('keywords', 'keywords-container', '');
+
+    // プロンプト出力をクリア
+    document.getElementById('prompt-output').textContent = '入力をリセットしました。\n\n希望ジャンルと検索キーワードを入力して\n「プロンプトを生成する」ボタンを押してください。';
+    document.getElementById('char-count').textContent = '';
+
+    showToast('🔄 入力をリセットしました（固定情報は保持）');
+  }
+
+  // Reset hard（全クリア）- ダイアログを表示
+  function resetHard() {
     document.getElementById('confirm-overlay').classList.add('show');
   }
 
@@ -1134,36 +1294,36 @@ K列：提案文（300文字以内）
   }
 
   function executeReset() {
-    // 全入力をクリア
-    ['name','genre','hours','reward','style','skills','tools','sheet-url','memo-text'].forEach(id => {
-      document.getElementById(id).value = '';
+    ['name','genre','hours','reward','style','skills','tools','sheet-url','gas-url'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
     });
 
-    // タグを全クリア
     tagData.keywords = []; renderTags('keywords', 'keywords-container', '');
     tagData.ng = [];       renderTags('ng', 'ng-container', 'ng');
     tagData.must = [];     renderTags('must', 'must-container', 'must');
     tagData.nice = [];     renderTags('nice', 'nice-container', 'nice');
 
-    // トグルをデフォルトに戻す
     document.querySelectorAll('#experience-group .toggle-btn').forEach((btn, i) => {
       btn.classList.toggle('active', i === 0);
     });
 
-    // プロンプト出力をクリア
-    document.getElementById('prompt-output').textContent = 'リセットしました。\n\n左側の項目を入力して\n「プロンプトを生成する」ボタンを押してください。';
+    // トグルを全てONに戻す
+    document.querySelectorAll('.toggle-save').forEach(toggle => {
+      toggle.classList.remove('off');
+      toggle.childNodes[0].textContent = '💾 保存あり';
+    });
+
+    document.getElementById('prompt-output').textContent = '全てクリアしました。\n\n左側の項目を入力して\n「プロンプトを生成する」ボタンを押してください。';
     document.getElementById('char-count').textContent = '';
 
-    // ファイル状態をクリア
-    document.getElementById('file-status').style.display = 'none';
-    document.getElementById('file-input').value = '';
-
-    // localStorageを削除
     localStorage.removeItem('scout_settings');
-
     closeConfirm();
-    showToast('🗑️ 全てリセットしました！');
+    showToast('🗑️ 全て初期化しました！');
   }
+
+  // Reset（旧・互換用）
+  function confirmReset() { resetHard(); }
 
   // Toast
   function showToast(msg) {
