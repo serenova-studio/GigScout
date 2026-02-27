@@ -848,16 +848,23 @@
 
     <div class="prompt-output" id="prompt-output">ここにプロンプトが生成されます。
 
-左側の項目を入力して
+項目を入力して
 「プロンプトを生成する」ボタンを押してください。
 
-💡 ヒント
-・「固定情報を保存」を押すと
-　次回起動時に自動で読み込まれます
-・スキル・NG条件・Must条件は
-　保存対象です
-・希望ジャンルと検索キーワードは
-　毎回変更してお使いください</div>
+💡 使い方
+・検索条件（ジャンル・キーワード）を入力
+・「プロンプトを生成する」を押す
+・右上の「コピー」でManusに貼り付ける
+
+💾 保存について
+・トグルで「保存あり」にした項目は
+　「固定情報を保存」ボタンで保存できます
+・次回起動時に自動で読み込まれます
+・検索条件はブラウザを閉じると消えます
+
+🔄 クリアについて
+・「検索条件をクリア」→ジャンル・キーワードのみ消去
+・「全て初期化」→保存データも含めて全て消去</div>
 
     <div class="char-count" id="char-count"></div>
   </div>
@@ -1314,7 +1321,7 @@ JSONの形式：
       toggle.childNodes[0].textContent = '保存あり';
     });
 
-    document.getElementById('prompt-output').textContent = '全てクリアしました。\n\n左側の項目を入力して\n「プロンプトを生成する」ボタンを押してください。';
+    document.getElementById('prompt-output').textContent = '全てクリアしました。\n\n項目を入力して\n「プロンプトを生成する」ボタンを押してください。';
     document.getElementById('char-count').textContent = '';
 
     localStorage.removeItem('scout_settings');
