@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gig Scout｜案件プロンプトジェネレーター</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: #2a2f3f;
+    --accent: #00e5a0;
+    --accent2: #0066ff;
+    --text: #e8eaf0;
+    --text-muted: #6b7280;
+    --danger: #ff4d6d;
+    --warning: #ffb800;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0d0f14 0%, #161920 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.05em;
+  }
+
+  .header p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: calc(100vh - 81px);
+  }
+
+  .left-panel {
+    padding: 32px;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+  }
+
+  .right-panel {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 81px;
+    height: calc(100vh - 81px);
+    overflow-y: auto;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .section-badge {
+    width: 6px;
+    height: 22px;
+    border-radius: 3px;
+  }
+
+  .badge-blue { background: var(--accent2); }
+  .badge-green { background: var(--accent); }
+  .badge-red { background: var(--danger); }
+  .badge-yellow { background: var(--warning); }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .save-hint {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0, 229, 160, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 229, 160, 0.2);
+  }
+
+  /* Form */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    padding: 10px 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    resize: vertical;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0, 229, 160, 0.1);
+  }
+
+  textarea { min-height: 80px; }
+
+  /* Tags input */
+  .tags-container {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 44px;
+    cursor: text;
+    transition: border-color 0.2s;
+  }
+
+  .tags-container:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0, 229, 160, 0.1);
+  }
+
+  .tag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 229, 160, 0.15);
+    border: 1px solid rgba(0, 229, 160, 0.3);
+    color: var(--accent);
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .tag.ng {
+    background: rgba(255, 77, 109, 0.15);
+    border-color: rgba(255, 77, 109, 0.3);
+    color: var(--danger);
+  }
+
+  .tag.must {
+    background: rgba(0, 102, 255, 0.15);
+    border-color: rgba(0, 102, 255, 0.3);
+    color: #5599ff;
+  }
+
+  .tag.nice {
+    background: rgba(255, 184, 0, 0.15);
+    border-color: rgba(255, 184, 0, 0.3);
+    color: var(--warning);
+  }
+
+  .tag-remove {
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .tag-remove:hover { opacity: 1; }
+
+  .tag-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 13px;
+    padding: 3px 4px;
+    min-width: 80px;
+    flex: 1;
+  }
+
+  .tag-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 5px;
+  }
+
+  /* Toggle group */
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .toggle-btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  .toggle-btn:hover { border-color: var(--accent); color: var(--text); }
+
+  .toggle-btn.active {
+    background: rgba(0, 229, 160, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* Right panel */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 22px;
+    background: var(--accent);
+    border-radius: 3px;
+  }
+
+  .prompt-output {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    line-height: 1.8;
+    color: #a8b4c8;
+    white-space: pre-wrap;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 300px);
+  }
+
+  .prompt-output .highlight-green { color: var(--accent); }
+  .prompt-output .highlight-blue { color: #5599ff; }
+  .prompt-output .highlight-red { color: var(--danger); }
+  .prompt-output .highlight-yellow { color: var(--warning); }
+
+  /* Buttons */
+  .btn-generate {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #00b37a);
+    border: none;
+    border-radius: 10px;
+    color: #0d0f14;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-generate:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0, 229, 160, 0.3);
+  }
+
+  .btn-generate:active { transform: translateY(0); }
+
+  .btn-copy {
+    padding: 10px 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-copy:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-copy.copied {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0, 229, 160, 0.1);
+  }
+
+  .btn-save {
+    padding: 10px 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-save:hover { border-color: var(--accent2); color: #5599ff; }
+  .btn-save.saved { border-color: var(--accent2); color: #5599ff; background: rgba(0, 102, 255, 0.1); }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Count badge */
+  .char-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 4px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--accent);
+    color: #0d0f14;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 9999;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .btn-reset {
+    padding: 10px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-reset:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: rgba(255, 77, 109, 0.1);
+  }
+
+  /* Confirm dialog */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .confirm-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .confirm-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    width: 320px;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.2s;
+  }
+
+  .confirm-overlay.show .confirm-box {
+    transform: scale(1);
+  }
+
+  .confirm-box .confirm-icon { font-size: 36px; margin-bottom: 12px; }
+  .confirm-box h3 { font-size: 16px; margin-bottom: 8px; color: var(--text); }
+  .confirm-box p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+
+  .confirm-btns { display: flex; gap: 10px; }
+
+  .confirm-btns .btn-yes {
+    flex: 1;
+    padding: 10px;
+    background: var(--danger);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .confirm-btns .btn-yes:hover { opacity: 0.85; }
+
+  .confirm-btns .btn-no {
+    flex: 1;
+    padding: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .confirm-btns .btn-no:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* File drop */
+  .file-drop-area {
+    background: var(--surface2);
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .file-drop-area:hover, .file-drop-area.dragover {
+    border-color: var(--accent);
+    background: rgba(0, 229, 160, 0.05);
+  }
+
+  .file-drop-icon { font-size: 28px; margin-bottom: 8px; }
+
+  .file-drop-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .file-drop-text span { font-size: 11px; color: var(--accent); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .right-panel { position: static; height: auto; }
+    .left-panel { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🎯</div>
+  <div>
+    <h1>Gig Scout｜案件プロンプトジェネレーター</h1>
+    <p>情報を入力してManusに送るプロンプトを自動生成</p>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Left: Input -->
+  <div class="left-panel">
+
+    <!-- 基本情報 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-blue"></div>
+        <span class="section-title">基本情報</span>
+        <span class="save-hint">💾 保存あり</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>お名前（任意）</label>
+          <input type="text" id="name" placeholder="例：そら">
+        </div>
+        <div class="form-group">
+          <label>希望ジャンル ＊</label>
+          <input type="text" id="genre" placeholder="例：GPTs作成代行">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>週の稼働時間</label>
+          <input type="text" id="hours" placeholder="例：10時間">
+        </div>
+        <div class="form-group">
+          <label>希望最低報酬</label>
+          <input type="text" id="reward" placeholder="例：時給1000円以上">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>クラウドソーシング経験</label>
+        <div class="toggle-group" id="experience-group">
+          <button class="toggle-btn active" onclick="selectToggle(this, 'experience-group')">未経験</button>
+          <button class="toggle-btn" onclick="selectToggle(this, 'experience-group')">少しあり</button>
+          <button class="toggle-btn" onclick="selectToggle(this, 'experience-group')">1年以上</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>作業スタイル</label>
+        <input type="text" id="style" placeholder="例：一人で黙々と作業したい、マニュアルがあれば安心">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- スキル -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-green"></div>
+        <span class="section-title">スキル・経験</span>
+        <span class="save-hint">💾 保存あり</span>
+      </div>
+
+      <div class="form-group">
+        <label>得意な作業</label>
+        <input type="text" id="skills" placeholder="例：GPTs設計・作成、プロンプト設計、AI活用サポート">
+      </div>
+
+      <div class="form-group">
+        <label>使用ツール</label>
+        <input type="text" id="tools" placeholder="例：ChatGPT、GPTs、Canva、Excel">
+      </div>
+
+      <div class="form-group">
+        <label>検索キーワード（Enterで追加）＊</label>
+        <div class="tags-container" id="keywords-container" onclick="document.getElementById('keyword-input').focus()">
+          <input class="tag-input" id="keyword-input" placeholder="キーワードを入力してEnter">
+        </div>
+        <p class="tag-hint">例：「GPTs」「AI活用」「プロンプト設計」</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 条件 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-red"></div>
+        <span class="section-title">NG条件</span>
+        <span class="save-hint">💾 保存あり</span>
+      </div>
+      <div class="tags-container" id="ng-container" onclick="document.getElementById('ng-input').focus()">
+        <input class="tag-input" id="ng-input" placeholder="NG条件を入力してEnter">
+      </div>
+      <p class="tag-hint">例：顔出し必須、通話営業あり、高度なプログラミング必須</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-blue"></div>
+        <span class="section-title">Must条件（必須）</span>
+        <span class="save-hint">💾 保存あり</span>
+      </div>
+      <div class="tags-container" id="must-container" onclick="document.getElementById('must-input').focus()">
+        <input class="tag-input" id="must-input" placeholder="Must条件を入力してEnter">
+      </div>
+      <p class="tag-hint">例：未経験OK、リモート完結、テキストのみでOK</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-yellow"></div>
+        <span class="section-title">Nice条件（加点）</span>
+        <span class="save-hint">💾 保存あり</span>
+      </div>
+      <div class="tags-container" id="nice-container" onclick="document.getElementById('nice-input').focus()">
+        <input class="tag-input" id="nice-input" placeholder="Nice条件を入力してEnter">
+      </div>
+      <p class="tag-hint">例：継続案件、マニュアルあり、週5時間以内で完結</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- メモ・プロフィール一括入力 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-yellow"></div>
+        <span class="section-title">メモ・プロフィール一括入力</span>
+        <span class="save-hint">💾 保存あり</span>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">ナレッジやメモに保存している情報をそのまま貼り付けてください。プロンプトの末尾に追加されます。</p>
+      <div class="file-drop-area" id="file-drop-area" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
+        <div class="file-drop-icon">📄</div>
+        <div class="file-drop-text">テキストファイルをドロップ<br><span>または クリックして選択（.txt / .md）</span></div>
+        <input type="file" id="file-input" accept=".txt,.md" style="display:none" onchange="handleFileSelect(event)">
+      </div>
+      <div id="file-status" style="font-size:11px;color:var(--accent);margin-top:6px;display:none;"></div>
+      <div class="form-group" style="margin-top:12px;">
+        <label>貼り付けたメモ・プロフィール情報</label>
+        <textarea id="memo-text" placeholder="ナレッジに保存している自分のプロフィール、スキル詳細、実績などをここに貼り付けてください。プロンプトの末尾に「# 参考情報」として自動的に追加されます。" style="min-height:140px;"></textarea>
+      </div>
+      <button class="btn-copy" onclick="clearMemo()" style="font-size:12px;padding:7px 14px;">🗑️ メモをクリア</button>
+    </div>
+
+    <hr class="divider">
+
+    <!-- スプシURL -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-badge badge-green"></div>
+        <span class="section-title">出力先スプレッドシート</span>
+      </div>
+      <div class="form-group">
+        <label>Google スプレッドシートURL</label>
+        <input type="text" id="sheet-url" placeholder="https://docs.google.com/spreadsheets/d/...">
+      </div>
+    </div>
+
+    <button class="btn-generate" onclick="generatePrompt()">
+      ✨ プロンプトを生成する
+    </button>
+
+  </div>
+
+  <!-- Right: Output -->
+  <div class="right-panel">
+    <div class="panel-header">
+      <div class="panel-title">生成されたプロンプト</div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-copy" id="copy-btn" onclick="copyPrompt()">
+        📋 コピー
+      </button>
+      <button class="btn-save" id="save-btn" onclick="saveSettings()">
+        💾 固定情報を保存
+      </button>
+      <button class="btn-reset" id="reset-btn" onclick="confirmReset()">
+        🗑️ 全リセット
+      </button>
+    </div>
+
+    <div class="prompt-output" id="prompt-output">ここにプロンプトが生成されます。
+
+左側の項目を入力して
+「プロンプトを生成する」ボタンを押してください。
+
+💡 ヒント
+・「固定情報を保存」を押すと
+　次回起動時に自動で読み込まれます
+・スキル・NG条件・Must条件は
+　保存対象です
+・希望ジャンルと検索キーワードは
+　毎回変更してお使いください</div>
+
+    <div class="char-count" id="char-count"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Confirm dialog -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <h3>全てリセットしますか？</h3>
+    <p>入力した内容と保存した固定情報が<br>全て削除されます。<br>この操作は元に戻せません。</p>
+    <div class="confirm-btns">
+      <button class="btn-yes" onclick="executeReset()">リセットする</button>
+      <button class="btn-no" onclick="closeConfirm()">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // タグ管理
+  const tagData = {
+    keywords: [],
+    ng: [],
+    must: [],
+    nice: []
+  };
+
+  function setupTagInput(inputId, containerId, type, tagClass) {
+    const input = document.getElementById(inputId);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = this.value.trim();
+        if (val) {
+          addTag(type, val, containerId, tagClass);
+          // バグ修正：確定後に値を完全クリア
+          this.value = '';
+          setTimeout(() => { this.value = ''; }, 0);
+        }
+        return false;
+      }
+      if (e.key === 'Backspace' && !this.value && tagData[type].length > 0) {
+        removeTag(type, tagData[type].length - 1, containerId, tagClass);
+      }
+    });
+    // IME確定後のEnterも防ぐ
+    input.addEventListener('compositionend', function() {
+      this._composing = false;
+    });
+    input.addEventListener('compositionstart', function() {
+      this._composing = true;
+    });
+  }
+
+  function addTag(type, value, containerId, tagClass) {
+    if (tagData[type].includes(value)) return;
+    tagData[type].push(value);
+    renderTags(type, containerId, tagClass);
+  }
+
+  function removeTag(type, index, containerId, tagClass) {
+    tagData[type].splice(index, 1);
+    renderTags(type, containerId, tagClass);
+  }
+
+  function renderTags(type, containerId, tagClass) {
+    const container = document.getElementById(containerId);
+    const input = container.querySelector('.tag-input');
+    container.querySelectorAll('.tag').forEach(t => t.remove());
+    tagData[type].forEach((val, i) => {
+      const tag = document.createElement('div');
+      tag.className = `tag ${tagClass}`;
+      tag.innerHTML = `${val}<span class="tag-remove" onclick="removeTag('${type}', ${i}, '${containerId}', '${tagClass}')">×</span>`;
+      container.insertBefore(tag, input);
+    });
+  }
+
+  setupTagInput('keyword-input', 'keywords-container', 'keywords', '');
+  setupTagInput('ng-input', 'ng-container', 'ng', 'ng');
+  setupTagInput('must-input', 'must-container', 'must', 'must');
+  setupTagInput('nice-input', 'nice-container', 'nice', 'nice');
+
+  // Toggle
+  function selectToggle(btn, groupId) {
+    document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Generate
+  function generatePrompt() {
+    const name = document.getElementById('name').value.trim();
+    const genre = document.getElementById('genre').value.trim();
+    const hours = document.getElementById('hours').value.trim();
+    const reward = document.getElementById('reward').value.trim();
+    const style = document.getElementById('style').value.trim();
+    const skills = document.getElementById('skills').value.trim();
+    const tools = document.getElementById('tools').value.trim();
+    const sheetUrl = document.getElementById('sheet-url').value.trim();
+    const experience = document.querySelector('#experience-group .toggle-btn.active')?.textContent || '未経験';
+
+    const memo = document.getElementById('memo-text').value.trim();
+
+    if (!genre) { showToast('⚠️ 希望ジャンルを入力してください'); return; }
+    if (tagData.keywords.length === 0) { showToast('⚠️ 検索キーワードを1つ以上入力してください'); return; }
+
+    const ngList = tagData.ng.length > 0 ? tagData.ng.map(v => `・${v}`).join('\n') : '・（なし）';
+    const mustList = tagData.must.length > 0 ? tagData.must.map(v => `・${v}`).join('\n') : '・（なし）';
+    const niceList = tagData.nice.length > 0 ? tagData.nice.map(v => `・${v}`).join('\n') : '・（なし）';
+    const keywords = tagData.keywords.map(k => `「${k}」`).join('・');
+    const urlLine = sheetUrl ? `URL：${sheetUrl}` : 'URL：（スプレッドシートのURLを貼り付けてください）';
+
+    const prompt = `あなたは案件スカウターです。
+「応募して採用される可能性が高い案件」を優先してください。
+見栄えが良いだけの案件より、スキルが合っていて返信率が高そうな案件を選んでください。
+過剰アクセスは禁止。各サイト最大10件、合計最大30件。取得できない場合は理由を記録。
+
+# 私の情報${name ? `\n・名前：${name}` : ''}
+・希望ジャンル：${genre}
+・週の稼働時間：${hours || '（未入力）'}
+・希望報酬：${reward || '時給1000円以上'}
+・得意な作業：${skills || '（未入力）'}
+・使用ツール：${tools || '（未入力）'}
+・作業スタイル：${style || '（未入力）'}
+・経験：クラウドソーシング${experience}
+
+# 検索キーワード
+${keywords}
+
+# NG条件（該当案件は除外）
+${ngList}
+
+# Must条件（必須・満たさない場合は除外）
+${mustList}
+
+# Nice条件（加点）
+${niceList}
+
+# 対象サイト
+・クラウドワークス
+・ランサーズ
+・ココナラ（公開募集ページのみ）
+
+# マッチ度の計算ルール（0〜100）
+・Must条件を満たす：+30（満たさない場合は除外）
+・NG条件に該当：除外
+・単価が希望以上：+25（下回る：除外）
+・希望ジャンル一致：+20（近い：+10）
+・継続案件：+15
+・未経験OK／マニュアルあり／テンプレあり：各+5
+・応募ハードル高い（テスト／長文／面談多い）：各-5
+
+# 抽出する項目（案件ごと）
+・取得日
+・サイト名（クラウドワークス／ランサーズ／ココナラのいずれかを必ず記入）
+・案件名
+・報酬（原文そのまま）
+・マッチ度（数値）
+・マッチ度（★★★／★★☆／★☆☆）
+・おすすめ理由（80文字以内、具体的に）
+・注意点
+・締切・募集人数（あれば）
+・URL
+・提案文（300文字以内・です・ます調）
+
+# マッチ度の★表示基準
+★★★（高い）：70点以上
+★★☆（普通）：40〜69点
+★☆☆（低い） ：39点以下
+
+# 出力件数
+・各サイト最大10件、合計最大30件
+・マッチ度40点未満は出力しない
+・マッチ度の高い順に並べる
+
+# 提案文の作成ルール
+・300文字以内に収めること
+・です・ます調で書く
+・構成：①案件への共感 ②自分の強み ③相手目線のメリット ④締め
+・案件ごとに内容を変えること
+・テンプレートのような文章にしないこと${name ? `\n・名前（${name}）は入れないこと` : ''}
+
+# 出力形式
+以下のスプレッドシートに列を分けて記入してください。
+${urlLine}
+
+1行目はヘッダーなので2行目から記入してください。
+
+【記入形式】
+1案件目：A2・B2・C2・D2・E2・F2・G2・H2・I2・J2・K2
+2案件目：A3・B3・C3・D3・E3・F3・G3・H3・I3・J3・K3
+以降同じ形式で続ける
+
+【列の内容】
+A列：取得日
+B列：サイト名
+C列：案件名
+D列：報酬
+E列：マッチ度（数値）
+F列：マッチ度（★）
+G列：おすすめ理由
+H列：注意点
+I列：締切・募集人数
+J列：URL
+K列：提案文（300文字以内）
+
+※必ず各項目を対応する列に分けて記入すること
+※A列にまとめて記入しないこと
+※B列のサイト名は必ず記入すること
+
+開始してください。${memo ? `\n\n# 参考情報（応募者のプロフィール詳細）\n${memo}` : ''}`;
+
+    document.getElementById('prompt-output').textContent = prompt;
+    document.getElementById('char-count').textContent = `${prompt.length}文字`;
+    showToast('✅ プロンプトを生成しました！');
+  }
+
+  // Copy
+  function copyPrompt() {
+    const text = document.getElementById('prompt-output').textContent;
+    if (!text || text.includes('ここにプロンプトが生成されます')) {
+      showToast('⚠️ 先にプロンプトを生成してください');
+      return;
+    }
+
+    const btn = document.getElementById('copy-btn');
+
+    const onSuccess = () => {
+      btn.textContent = '✅ コピーしました！';
+      btn.classList.add('copied');
+      showToast('📋 クリップボードにコピーしました！');
+      setTimeout(() => {
+        btn.textContent = '📋 コピー';
+        btn.classList.remove('copied');
+      }, 2000);
+    };
+
+    // まずClipboard APIを試す
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(onSuccess).catch(() => fallbackCopy(text, onSuccess));
+    } else {
+      fallbackCopy(text, onSuccess);
+    }
+  }
+
+  function fallbackCopy(text, onSuccess) {
+    // textarea を使った古典的なコピー方法
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      onSuccess();
+    } catch(e) {
+      showToast('⚠️ コピーに失敗しました。手動でコピーしてください');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // Save / Load
+  function saveSettings() {
+    const data = {
+      skills: document.getElementById('skills').value,
+      tools: document.getElementById('tools').value,
+      style: document.getElementById('style').value,
+      hours: document.getElementById('hours').value,
+      reward: document.getElementById('reward').value,
+      ng: [...tagData.ng],
+      must: [...tagData.must],
+      nice: [...tagData.nice],
+      sheetUrl: document.getElementById('sheet-url').value,
+      memo: document.getElementById('memo-text').value,
+      experience: document.querySelector('#experience-group .toggle-btn.active')?.textContent || '未経験'
+    };
+    localStorage.setItem('scout_settings', JSON.stringify(data));
+    const btn = document.getElementById('save-btn');
+    btn.textContent = '✅ 保存しました！';
+    btn.classList.add('saved');
+    showToast('💾 固定情報を保存しました！');
+    setTimeout(() => {
+      btn.textContent = '💾 固定情報を保存';
+      btn.classList.remove('saved');
+    }, 2000);
+  }
+
+  function loadSettings() {
+    const raw = localStorage.getItem('scout_settings');
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      if (data.skills) document.getElementById('skills').value = data.skills;
+      if (data.tools) document.getElementById('tools').value = data.tools;
+      if (data.style) document.getElementById('style').value = data.style;
+      if (data.hours) document.getElementById('hours').value = data.hours;
+      if (data.reward) document.getElementById('reward').value = data.reward;
+      if (data.sheetUrl) document.getElementById('sheet-url').value = data.sheetUrl;
+      if (data.memo) document.getElementById('memo-text').value = data.memo;
+
+      if (data.ng) { tagData.ng = data.ng; renderTags('ng', 'ng-container', 'ng'); }
+      if (data.must) { tagData.must = data.must; renderTags('must', 'must-container', 'must'); }
+      if (data.nice) { tagData.nice = data.nice; renderTags('nice', 'nice-container', 'nice'); }
+
+      if (data.experience) {
+        document.querySelectorAll('#experience-group .toggle-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.textContent === data.experience);
+        });
+      }
+    } catch(e) {}
+  }
+
+  // File handling
+  function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('file-drop-area').classList.add('dragover');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('file-drop-area').classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) readFile(file);
+  }
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) readFile(file);
+  }
+
+  function readFile(file) {
+    if (!file.name.match(/\.(txt|md)$/i)) {
+      showToast('⚠️ .txt または .md ファイルのみ対応しています');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const current = document.getElementById('memo-text').value;
+      document.getElementById('memo-text').value = current ? current + '\n\n' + e.target.result : e.target.result;
+      const status = document.getElementById('file-status');
+      status.textContent = `✅ ${file.name} を読み込みました`;
+      status.style.display = 'block';
+      showToast(`📄 ${file.name} を読み込みました`);
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  function clearMemo() {
+    document.getElementById('memo-text').value = '';
+    document.getElementById('file-status').style.display = 'none';
+    document.getElementById('file-input').value = '';
+    showToast('🗑️ メモをクリアしました');
+  }
+
+  // Reset
+  function confirmReset() {
+    document.getElementById('confirm-overlay').classList.add('show');
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirm-overlay').classList.remove('show');
+  }
+
+  function executeReset() {
+    // 全入力をクリア
+    ['name','genre','hours','reward','style','skills','tools','sheet-url','memo-text'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+
+    // タグを全クリア
+    tagData.keywords = []; renderTags('keywords', 'keywords-container', '');
+    tagData.ng = [];       renderTags('ng', 'ng-container', 'ng');
+    tagData.must = [];     renderTags('must', 'must-container', 'must');
+    tagData.nice = [];     renderTags('nice', 'nice-container', 'nice');
+
+    // トグルをデフォルトに戻す
+    document.querySelectorAll('#experience-group .toggle-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === 0);
+    });
+
+    // プロンプト出力をクリア
+    document.getElementById('prompt-output').textContent = 'リセットしました。\n\n左側の項目を入力して\n「プロンプトを生成する」ボタンを押してください。';
+    document.getElementById('char-count').textContent = '';
+
+    // ファイル状態をクリア
+    document.getElementById('file-status').style.display = 'none';
+    document.getElementById('file-input').value = '';
+
+    // localStorageを削除
+    localStorage.removeItem('scout_settings');
+
+    closeConfirm();
+    showToast('🗑️ 全てリセットしました！');
+  }
+
+  // Toast
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Init
+  loadSettings();
+</script>
+</body>
+</html>
