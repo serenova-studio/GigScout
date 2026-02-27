@@ -699,11 +699,6 @@
         <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
 
-      <div class="form-group">
-        <label>お名前（任意）</label>
-        <input type="text" id="name" placeholder="例：そら">
-      </div>
-
       <div class="form-row">
         <div class="form-group">
           <label>週の稼働時間</label>
@@ -742,12 +737,12 @@
 
       <div class="form-group">
         <label>得意な作業</label>
-        <input type="text" id="skills" placeholder="例：GPTs設計・作成、プロンプト設計、AI活用サポート">
+        <input type="text" id="skills" placeholder="例：動画編集、GPTs設計・作成、プロンプト設計、AI活用サポート">
       </div>
 
       <div class="form-group">
         <label>使用ツール</label>
-        <input type="text" id="tools" placeholder="例：ChatGPT、GPTs、Canva、Excel、CapCut">
+        <input type="text" id="tools" placeholder="例：Premiere Pro、ChatGPT、GPTs、Canva、Excel、CapCut">
       </div>
     </div>
 
@@ -1298,7 +1293,7 @@ JSONの形式：
     document.getElementById('prompt-output').textContent = '入力をリセットしました。\n\n希望ジャンルと検索キーワードを入力して\n「プロンプトを生成する」ボタンを押してください。';
     document.getElementById('char-count').textContent = '';
 
-    showToast('🗑️ 検索条件をクリアしました（固定情報は保持）');
+    showToast('🗑️ 検索条件をクリアしました<span style="font-size:10px;opacity:0.8;">（固定情報は保持）</span>');
   }
 
   // Reset hard（全クリア）- ダイアログを表示
@@ -1345,7 +1340,7 @@ JSONの形式：
   // Toast
   function showToast(msg) {
     const toast = document.getElementById('toast');
-    toast.textContent = msg;
+    toast.innerHTML = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
