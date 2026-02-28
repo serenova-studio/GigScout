@@ -75,7 +75,8 @@
     font-weight: 500;
   }
 
-  input::placeholder, textarea::placeholder { color: #3d4454 !important; }
+  input::placeholder { color: #3d4454 !important; }
+  textarea::placeholder { color: #a8b4c8 !important; }
 
   /* Layout */
   .layout {
@@ -682,7 +683,7 @@
       </div>
 
       <div class="form-group">
-        <label>検索キーワード（Enterで追加）＊</label>
+        <label>検索（Enterで追加）</label>
         <div class="tags-container" id="keywords-container" onclick="document.getElementById('keyword-input').focus()">
           <input class="tag-input" id="keyword-input" placeholder="キーワードを入力してEnter">
         </div>
@@ -703,21 +704,21 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label>週の稼働時間</label>
-          <input type="text" id="hours" placeholder="例：10時間">
+          <label>稼働日数・時間</label>
+          <input type="text" id="hours" placeholder="例：週10時間">
         </div>
         <div class="form-group">
-          <label>希望最低報酬 <span style="font-size:10px;color:var(--text-muted);font-weight:400;">例：時給1000円以上</span></label>
-          <input type="text" id="reward" placeholder="時給1000円以上">
+          <label>希望最低報酬</label>
+          <input type="text" id="reward" placeholder="固定　2000円〜">
         </div>
       </div>
 
       <div class="form-group">
-        <label>クラウドソーシング経験</label>
+        <label>経験</label>
         <div class="toggle-group" id="experience-group">
           <button class="toggle-btn active" onclick="selectToggle(this, 'experience-group')">未経験</button>
-          <button class="toggle-btn" onclick="selectToggle(this, 'experience-group')">少しあり</button>
-          <button class="toggle-btn" onclick="selectToggle(this, 'experience-group')">1年以上</button>
+          <button class="toggle-btn" onclick="selectToggle(this, 'experience-group')">初心者</button>
+          <button class="toggle-btn" onclick="selectToggle(this, 'experience-group')">3ヶ月以上</button>
         </div>
       </div>
 
@@ -739,12 +740,12 @@
 
       <div class="form-group">
         <label>得意な作業</label>
-        <input type="text" id="skills" placeholder="例：動画編集、GPTs設計・作成、プロンプト設計">
+        <input type="text" id="skills" placeholder="例：動画編集・GPTs設計、プロンプト設計">
       </div>
 
       <div class="form-group">
         <label>使用ツール</label>
-        <input type="text" id="tools" placeholder="例：Premiere Pro、ChatGPT、Canva、Excel">
+        <input type="text" id="tools" placeholder="例：Premiere Pro、Gemini、Canva">
       </div>
     </div>
 
@@ -760,7 +761,7 @@
       <div class="tags-container" id="ng-container" onclick="document.getElementById('ng-input').focus()">
         <input class="tag-input" id="ng-input" placeholder="NG条件を入力してEnter">
       </div>
-      <p class="tag-hint">例：顔出し必須、通話営業あり、高度なエフェクト・3D編集必須</p>
+      <p class="tag-hint">例：顔出し必須、通話営業あり、高度なエフェクト</p>
     </div>
 
     <div class="section">
@@ -772,7 +773,7 @@
       <div class="tags-container" id="must-container" onclick="document.getElementById('must-input').focus()">
         <input class="tag-input" id="must-input" placeholder="Must条件を入力してEnter">
       </div>
-      <p class="tag-hint">例：未経験OK、リモート完結、素材支給あり</p>
+      <p class="tag-hint">例：未経験OK、フルリモート、素材支給あり</p>
     </div>
 
     <div class="section">
@@ -784,19 +785,18 @@
       <div class="tags-container" id="nice-container" onclick="document.getElementById('nice-input').focus()">
         <input class="tag-input" id="nice-input" placeholder="Nice条件を入力してEnter">
       </div>
-      <p class="tag-hint">例：継続案件、マニュアルあり、ショート動画中心、テンプレあり</p>
+      <p class="tag-hint">例：継続、ショート動画中心、テンプレあり</p>
     </div>
 
     <hr class="divider">
 
-    <!-- メモ・プロフィール一括入力 -->
+    <!-- 一括入力 -->
     <div class="section">
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
-        <span class="section-title">メモ・プロフィール一括入力</span>
+        <span class="section-title">一括入力</span>
         <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">ナレッジやメモに保存している情報をそのまま貼り付けてください。プロンプトの末尾に追加されます。</p>
       <div class="file-drop-area" id="file-drop-area" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
         <div class="file-drop-icon">📄</div>
         <div class="file-drop-text">テキストファイルをドロップ<br><span>または クリックして選択（.txt / .md）</span></div>
@@ -804,8 +804,8 @@
       </div>
       <div id="file-status" style="font-size:11px;color:var(--accent);margin-top:6px;display:none;"></div>
       <div class="form-group" style="margin-top:12px;">
-        <label>貼り付けたメモ・プロフィール情報</label>
-        <textarea id="memo-text" placeholder="ナレッジに保存している自分のプロフィール、スキル詳細、実績などをここに貼り付けてください。プロンプトの末尾に「# 参考情報」として自動的に追加されます。" style="min-height:140px;"></textarea>
+        <label>💡 プロフィール、スキル詳細、実績などを保存したテキストファイルを貼り付けてください。</label>
+        <textarea id="memo-text" placeholder="ここにテキストが反映されます。&#10;プロンプトの末尾に「# 参考情報」として自動的に追加されます。&#10;✏️ 直接入力や編集もできます" style="min-height:140px;"></textarea>
       </div>
       <button class="btn-copy" onclick="clearMemo()" style="font-size:12px;padding:7px 14px;">🗑️ メモをクリア</button>
     </div>
@@ -993,7 +993,7 @@
 
 # 私の情報
 ・希望ジャンル：${genre}
-・週の稼働時間：${hours || '（未入力）'}
+・稼働日数・時間：${hours || '（未入力）'}
 ・希望報酬：${reward || '時給1000円以上'}
 ・得意な作業：${skills || '（未入力）'}
 ・使用ツール：${tools || '（未入力）'}
@@ -1062,27 +1062,42 @@ ${niceList}
 
 GAS URL：${gasLine}${urlLine}
 
+★は0〜100のmatch_scoreから自動変換してください。
+・0〜20 → ★☆☆☆☆
+・21〜40 → ★★☆☆☆
+・41〜60 → ★★★☆☆
+・61〜80 → ★★★★☆
+・81〜100 → ★★★★★
+応募期限が取得できない場合はapplication_deadlineに「—」を出力してください。
+statusには状態（募集中／終了など）のみを記載し「期限不明」などは含めないでください。
+
 JSONの形式：
 {
   "rows": [
     {
-      "date": "取得日",
+      "match_star": "★〜★★★★★（5段階固定）",
+      "title": "案件タイトル",
+      "reason_short": "おすすめポイント（短文・80字以内）",
+      "reward": "想定報酬",
+      "status": "募集状況",
+      "application_deadline": "応募期限（不明の場合は—）",
+      "url": "案件ページURL",
       "site": "サイト名",
-      "title": "案件名",
-      "reward": "報酬",
-      "match_score": "マッチ度（数値）",
-      "match_star": "マッチ度（★）",
-      "reason": "おすすめ理由",
-      "caution": "注意点",
-      "deadline": "締切・募集人数",
-      "url": "案件URL",
-      "proposal": "提案文"
+      "proposal": "提案文案（300文字以内）",
+      "match_score": "適合スコア（0〜100）",
+      "reason_full": "おすすめポイント（全文）",
+      "caution": "気になる点",
+      "available_slots": "募集人数",
+      "remaining_slots": "残り枠",
+      "raw_text": "抽出元（原文）",
+      "date": "取得日時"
     }
   ]
 }
 
 ※スプレッドシートへの直接書き込みは不要
 ※必ず上記GAS URLへのPOSTで送信すること
+※match_starは必ず★☆形式で出力すること（数値・空欄不可）
 
 開始してください。${memo ? `\n\n# 参考情報（応募者のプロフィール詳細）\n${memo}` : ''}`;
 
