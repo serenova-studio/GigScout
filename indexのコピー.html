@@ -1402,6 +1402,37 @@ JSONの形式：
 
   // Init
   loadSettings();
+
+  // オートコンプリート選択後にEnterで背景をリセット
+  document.querySelectorAll('input[type="text"], input:not([type])').forEach(input => {
+    // 値が変わった瞬間に強制リセット
+    input.addEventListener('change', function() {
+      const val = this.value;
+      this.value = '';
+      this.style.backgroundColor = '';
+      this.style.color = '';
+      requestAnimationFrame(() => {
+        this.value = val;
+      });
+    });
+
+    // Enterキーで背景リセット
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const val = this.value;
+        setTimeout(() => {
+          this.blur();
+          this.focus();
+        }, 10);
+      }
+    });
+
+    // フォーカスが外れた時もリセット
+    input.addEventListener('blur', function() {
+      this.style.backgroundColor = '';
+      this.style.color = '';
+    });
+  });
 </script>
 </body>
 </html>
