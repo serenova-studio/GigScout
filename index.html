@@ -709,12 +709,12 @@
         </div>
         <div class="form-group">
           <label>希望最低報酬</label>
-          <input type="text" id="reward" placeholder="固定　2000円〜">
+          <input type="text" id="reward" placeholder="例：固定　2000円〜">
         </div>
       </div>
 
       <div class="form-group">
-        <label>経験</label>
+        <label>経験レベル</label>
         <div class="toggle-group" id="experience-group">
           <button class="toggle-btn active" onclick="selectToggle(this, 'experience-group')">未経験</button>
           <button class="toggle-btn" onclick="selectToggle(this, 'experience-group')">初心者</button>
@@ -995,11 +995,11 @@
 # 私の情報
 ・希望ジャンル：${genre}
 ・稼働日数・時間：${hours || '（未入力）'}
-・希望報酬：${reward || '時給1000円以上'}
+・希望報酬：${reward || '固定　2000円〜'}
 ・得意な作業：${skills || '（未入力）'}
 ・使用ツール：${tools || '（未入力）'}
 ・作業スタイル：${style || '（未入力）'}
-・経験：クラウドソーシング${experience}
+・経験レベル：${experience}
 
 # 検索キーワード
 ${keywords}
