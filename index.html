@@ -678,16 +678,16 @@
       </div>
 
       <div class="form-group">
-        <label>希望ジャンル ＊</label>
+        <label>希望ジャンル ＊必須</label>
         <input type="text" id="genre" placeholder="例：GPTs作成代行、動画編集">
       </div>
 
       <div class="form-group">
-        <label>検索（Enterで追加）</label>
+        <label>検索 ＊必須</label>
         <div class="tags-container" id="keywords-container" onclick="document.getElementById('keyword-input').focus()">
           <input class="tag-input" id="keyword-input" placeholder="キーワードを入力してEnter">
         </div>
-        <p class="tag-hint">例：「GPTs」「AI活用」「プロンプト設計」「業務効率化」</p>
+        <p class="tag-hint">例：「AI活用」「プロンプト設計」「テロップ入れ」</p>
       <button class="btn-reset-soft" onclick="resetSoft()" style="margin-top:10px;">検索条件をクリア</button>
       </div>
     </div>
@@ -767,7 +767,7 @@
     <div class="section">
       <div class="section-header">
         <div class="section-badge badge-blue"></div>
-        <span class="section-title">Must条件（必須）</span>
+        <span class="section-title">Must条件 ＊必須</span>
         <button class="toggle-save" onclick="toggleSave(this)">保存あり<div class="toggle-dot"></div></button>
       </div>
       <div class="tags-container" id="must-container" onclick="document.getElementById('must-input').focus()">
@@ -978,6 +978,7 @@
 
     if (!genre) { showToast('⚠️ 希望ジャンルを入力してください'); return; }
     if (tagData.keywords.length === 0) { showToast('⚠️ 検索キーワードを1つ以上入力してください'); return; }
+    if (tagData.must.length === 0) { showToast('⚠️ Must条件を1つ以上入力してください'); return; }
 
     const ngList = tagData.ng.length > 0 ? tagData.ng.map(v => `・${v}`).join('\n') : '・（なし）';
     const mustList = tagData.must.length > 0 ? tagData.must.map(v => `・${v}`).join('\n') : '・（なし）';
