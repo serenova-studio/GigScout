@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="theme-color" content="#0d0f14">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gig Scout｜案件プロンプトジェネレーター</title>
+<title>Gig Scout｜案件スカウター</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
 
@@ -44,35 +44,26 @@
     z-index: 100;
   }
 
-  .header-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-  }
-
   .header h1 {
-    font-size: 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 26px;
     font-weight: 700;
-    color: var(--text);
-    letter-spacing: 0.05em;
+    background: linear-gradient(90deg, #00e5a0, #0066ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
   }
 
-  .header p {
+  .header-sub {
+    font-size: 11px;
+    color: #6666aa;
+    margin-top: 2px;
+  }
+
+  .header-desc {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 2px;
-  }
-
-  .header p:first-of-type {
-    font-size: 12px;
-    color: var(--text);
-    margin-top: 2px;
-    font-weight: 500;
   }
 
   input::placeholder { color: #3d4454 !important; }
@@ -228,24 +219,6 @@
     font-weight: 500;
   }
 
-  .tag.ng {
-    background: rgba(0, 102, 255, 0.15);
-    border-color: rgba(0, 102, 255, 0.3);
-    color: #5599ff;
-  }
-
-  .tag.must {
-    background: rgba(0, 102, 255, 0.15);
-    border-color: rgba(0, 102, 255, 0.3);
-    color: #5599ff;
-  }
-
-  .tag.nice {
-    background: rgba(0, 102, 255, 0.15);
-    border-color: rgba(0, 102, 255, 0.3);
-    color: #5599ff;
-  }
-
   .tag-remove {
     cursor: pointer;
     opacity: 0.7;
@@ -350,11 +323,6 @@
     max-height: calc(100vh - 300px);
   }
 
-  .prompt-output .highlight-green { color: var(--accent); }
-  .prompt-output .highlight-blue { color: #5599ff; }
-  .prompt-output .highlight-red { color: var(--danger); }
-  .prompt-output .highlight-yellow { color: var(--warning); }
-
   /* Buttons */
   .btn-generate {
     width: 100%;
@@ -421,7 +389,6 @@
 
   .btn-save:hover { border-color: var(--accent2); color: #5599ff; }
   .btn-save.saved { border-color: var(--accent2); color: #5599ff; background: rgba(0, 102, 255, 0.1); }
-
 
   /* Toggle Save Switch */
   .toggle-save {
@@ -493,8 +460,9 @@
   /* Toast */
   .toast {
     position: fixed;
-    top: 32px;
-    right: 32px;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
     background: var(--surface2);
     border: 1px solid var(--border);
     color: var(--text);
@@ -502,15 +470,13 @@
     border-radius: 8px;
     font-size: 13px;
     font-weight: 700;
-    transform: translateY(-80px);
-    opacity: 0;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 9999;
+    white-space: nowrap;
   }
 
   .toast.show {
-    transform: translateY(0);
-    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 
   .btn-reset {
@@ -668,11 +634,10 @@
 <body>
 
 <div class="header">
-  <div class="header-icon">🎯</div>
   <div>
-    <h1>Gig Scout</h1>
-    <p>案件プロンプトジェネレーター</p>
-    <p>情報を入力してManusに送るプロンプトを自動生成</p>
+    <h1>GigScout</h1>
+    <p class="header-sub">案件スカウター</p>
+    <p class="header-desc">AIエージェントに送るプロンプトを自動生成</p>
   </div>
 </div>
 
@@ -886,7 +851,7 @@
 💡 使い方
 ・検索条件（ジャンル・キーワード）を入力
 ・「プロンプトを生成する」を押す
-・右上の「コピー」でManusに貼り付ける
+・右上の「コピー」でAIエージェントに貼り付ける
 
 💾 保存について
 ・トグルで「保存あり」にした項目は
@@ -934,7 +899,6 @@
         const val = this.value.trim();
         if (val) {
           addTag(type, val, containerId, tagClass);
-          // バグ修正：確定後に値を完全クリア
           this.value = '';
           setTimeout(() => { this.value = ''; }, 0);
         }
@@ -944,13 +908,8 @@
         removeTag(type, tagData[type].length - 1, containerId, tagClass);
       }
     });
-    // IME確定後のEnterも防ぐ
-    input.addEventListener('compositionend', function() {
-      this._composing = false;
-    });
-    input.addEventListener('compositionstart', function() {
-      this._composing = true;
-    });
+    input.addEventListener('compositionend', function() { this._composing = false; });
+    input.addEventListener('compositionstart', function() { this._composing = true; });
   }
 
   function addTag(type, value, containerId, tagClass) {
@@ -981,19 +940,12 @@
   setupTagInput('must-input', 'must-container', 'must', 'must');
   setupTagInput('nice-input', 'nice-container', 'nice', 'nice');
 
-  // Toggle
-  function selectToggle(btn, groupId) {
-    document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-
   function selectToggleOptional(btn, groupId) {
     const isActive = btn.classList.contains('active');
     document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(b => b.classList.remove('active'));
     if (!isActive) btn.classList.add('active');
   }
 
-  // Generate
   function generatePrompt() {
     const genre = document.getElementById('genre').value.trim();
     const hours = document.getElementById('hours').value.trim();
@@ -1006,7 +958,6 @@
     const experience = document.querySelector('#experience-group .toggle-btn.active')?.textContent || '';
     const practical = document.querySelector('#practical-group .toggle-btn.active')?.textContent || '';
     const orderExp = document.querySelector('#order-group .toggle-btn.active')?.textContent || '';
-
     const memo = document.getElementById('memo-text').value.trim();
 
     if (!genre) { showToast('⚠️ 希望ジャンルを入力してください'); return; }
@@ -1173,27 +1124,22 @@ JSONの形式：
     showToast('✅ プロンプトを生成しました！');
   }
 
-  // Copy
   function copyPrompt() {
     const text = document.getElementById('prompt-output').textContent;
     if (!text || text.includes('ここにプロンプトが生成されます')) {
       showToast('⚠️ 先にプロンプトを生成してください');
       return;
     }
-
     const btn = document.getElementById('copy-btn');
-
     const onSuccess = () => {
       btn.textContent = '✅ コピーしました！';
       btn.classList.add('copied');
-      showToast('📋 クリップボードにコピーしました！');
+      showToast('📋 AIエージェントに貼り付けてください！');
       setTimeout(() => {
         btn.textContent = '📋 コピー';
         btn.classList.remove('copied');
       }, 2000);
     };
-
-    // まずClipboard APIを試す
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(onSuccess).catch(() => fallbackCopy(text, onSuccess));
     } else {
@@ -1202,7 +1148,6 @@ JSONの形式：
   }
 
   function fallbackCopy(text, onSuccess) {
-    // textarea を使った古典的なコピー方法
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.style.position = 'fixed';
@@ -1220,39 +1165,30 @@ JSONの形式：
     document.body.removeChild(ta);
   }
 
-  // Save / Load
-  // トグルON/OFF切り替え
   function toggleSave(btn) {
     const isOn = !btn.classList.contains('off');
     btn.classList.toggle('off', isOn);
-    // テキストノード更新
     btn.childNodes[0].textContent = isOn ? '保存なし' : '保存あり';
   }
 
-  // 各セクションのトグル状態を取得
   function getSaveToggles() {
     const toggles = document.querySelectorAll('.toggle-save');
     const result = {};
-    toggles.forEach((t, i) => {
-      result['toggle_' + i] = !t.classList.contains('off');
-    });
+    toggles.forEach((t, i) => { result['toggle_' + i] = !t.classList.contains('off'); });
     return result;
   }
 
   function saveSettings() {
-    const toggles = getSaveToggles();
     const allToggles = document.querySelectorAll('.toggle-save');
-
-    // 各セクションのトグル状態に応じて保存
-    const data = { toggleStates: {},
+    const data = {
+      toggleStates: {},
       experience: document.querySelector('#experience-group .toggle-btn.active')?.textContent || '',
       practical: document.querySelector('#practical-group .toggle-btn.active')?.textContent || '',
       orderExp: document.querySelector('#order-group .toggle-btn.active')?.textContent || ''
     };
 
-    // セクション名とフィールドのマッピング
     const sectionMap = [
-      { key: 'basic', fields: ['name','hours','reward','style'] },
+      { key: 'basic', fields: ['hours','reward','style'] },
       { key: 'skills', fields: ['skills','tools'] },
       { key: 'ng', tags: 'ng' },
       { key: 'must', tags: 'must' },
@@ -1278,7 +1214,6 @@ JSONの形式：
       }
     });
 
-    // 常に保存するもの
     data['sheet-url'] = document.getElementById('sheet-url').value;
     data['gas-url'] = document.getElementById('gas-url').value;
 
@@ -1298,17 +1233,13 @@ JSONの形式：
     if (!raw) return;
     try {
       const data = JSON.parse(raw);
-
-      // フィールド復元
-      ['skills','tools','style','hours','reward','memo-text','sheet-url','gas-url','name'].forEach(id => {
+      ['skills','tools','style','hours','reward','memo-text','sheet-url','gas-url'].forEach(id => {
         const el = document.getElementById(id);
         if (el && data[id]) el.value = data[id];
       });
-
       if (data.ng) { tagData.ng = data.ng; renderTags('ng', 'ng-container', 'ng'); }
       if (data.must) { tagData.must = data.must; renderTags('must', 'must-container', 'must'); }
       if (data.nice) { tagData.nice = data.nice; renderTags('nice', 'nice-container', 'nice'); }
-
       if (data.experience) {
         document.querySelectorAll('#experience-group .toggle-btn').forEach(btn => {
           btn.classList.toggle('active', btn.textContent === data.experience);
@@ -1324,8 +1255,6 @@ JSONの形式：
           btn.classList.toggle('active', btn.textContent === data.orderExp);
         });
       }
-
-      // トグル状態復元
       if (data.toggleStates) {
         const allToggles = document.querySelectorAll('.toggle-save');
         allToggles.forEach((toggle, i) => {
@@ -1337,7 +1266,6 @@ JSONの形式：
     } catch(e) {}
   }
 
-  // File handling
   function handleDragOver(e) {
     e.preventDefault();
     document.getElementById('file-drop-area').classList.add('dragover');
@@ -1379,23 +1307,15 @@ JSONの形式：
     showToast('🗑️ メモをクリアしました');
   }
 
-  // Reset soft（入力のみリセット・固定情報は保持）
   function resetSoft() {
-    // 毎回変える部分だけクリア
-    ['genre'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
+    ['genre'].forEach(id => { document.getElementById(id).value = ''; });
     tagData.keywords = []; renderTags('keywords', 'keywords-container', '');
     document.getElementById('keyword-input').value = '';
-
-    // プロンプト出力をクリア
     document.getElementById('prompt-output').textContent = '入力をリセットしました。\n\n希望ジャンルと検索キーワードを入力して\n「プロンプトを生成する」ボタンを押してください。';
     document.getElementById('char-count').textContent = '';
-
-    showToast('🗑️ 検索条件をクリアしました<span style="font-size:10px;opacity:0.8;">（固定情報は保持）</span>');
+    showToast('🗑️ 検索条件をクリアしました（固定情報は保持）');
   }
 
-  // Reset hard（全クリア）- ダイアログを表示
   function resetHard() {
     document.getElementById('confirm-overlay').classList.add('show');
   }
@@ -1405,38 +1325,28 @@ JSONの形式：
   }
 
   function executeReset() {
-    ['name','genre','hours','reward','style','skills','tools','sheet-url','gas-url'].forEach(id => {
+    ['genre','hours','reward','style','skills','tools','sheet-url','gas-url'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
-
     tagData.keywords = []; renderTags('keywords', 'keywords-container', '');
     tagData.ng = [];       renderTags('ng', 'ng-container', 'ng');
     tagData.must = [];     renderTags('must', 'must-container', 'must');
     tagData.nice = [];     renderTags('nice', 'nice-container', 'nice');
-
     document.querySelectorAll('#experience-group .toggle-btn, #practical-group .toggle-btn, #order-group .toggle-btn').forEach(btn => {
       btn.classList.remove('active');
     });
-
-    // トグルを全てONに戻す
     document.querySelectorAll('.toggle-save').forEach(toggle => {
       toggle.classList.remove('off');
       toggle.childNodes[0].textContent = '保存あり';
     });
-
     document.getElementById('prompt-output').textContent = '全てクリアしました。\n\n項目を入力して\n「プロンプトを生成する」ボタンを押してください。';
     document.getElementById('char-count').textContent = '';
-
     localStorage.removeItem('scout_settings');
     closeConfirm();
     showToast('🗑️ 全て初期化しました！');
   }
 
-  // Reset（旧・互換用）
-  function confirmReset() { resetHard(); }
-
-  // Toast
   function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.innerHTML = msg;
@@ -1444,34 +1354,21 @@ JSONの形式：
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
-  // Init
   loadSettings();
 
-  // オートコンプリート選択後にEnterで背景をリセット
   document.querySelectorAll('input[type="text"], input:not([type])').forEach(input => {
-    // 値が変わった瞬間に強制リセット
     input.addEventListener('change', function() {
       const val = this.value;
       this.value = '';
       this.style.backgroundColor = '';
       this.style.color = '';
-      requestAnimationFrame(() => {
-        this.value = val;
-      });
+      requestAnimationFrame(() => { this.value = val; });
     });
-
-    // Enterキーで背景リセット
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
-        const val = this.value;
-        setTimeout(() => {
-          this.blur();
-          this.focus();
-        }, 10);
+        setTimeout(() => { this.blur(); this.focus(); }, 10);
       }
     });
-
-    // フォーカスが外れた時もリセット
     input.addEventListener('blur', function() {
       this.style.backgroundColor = '';
       this.style.color = '';
